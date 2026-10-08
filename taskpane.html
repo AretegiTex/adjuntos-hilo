@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Adjuntos del hilo</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <script src="msal-browser.min.js"></script>
+  <script src="config.js"></script>
+  <link rel="stylesheet" href="taskpane.css">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="titulo">Adjuntos del hilo</div>
+    <div class="acciones">
+      <label class="check"><input type="checkbox" id="chkInline"> Imágenes incrustadas</label>
+      <button id="btnTodos" class="btn secundario" disabled>Descargar todos</button>
+      <button id="btnRecargar" class="btn secundario" title="Recargar">↻</button>
+    </div>
+  </header>
+
+  <div id="asunto" class="asunto"></div>
+
+  <div id="estado" class="estado"></div>
+
+  <div id="login" class="login oculto">
+    <p>Para leer la conversación, el complemento necesita permiso de lectura de tu buzón (una sola vez).</p>
+    <button id="btnLogin" class="btn">Iniciar sesión</button>
+  </div>
+
+  <main id="lista" class="lista"></main>
+
+  <footer class="pie">
+    <span id="resumen"></span>
+  </footer>
+
+  <script src="taskpane.js"></script>
+</body>
+</html>
