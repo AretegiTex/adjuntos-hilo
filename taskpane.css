@@ -91,48 +91,33 @@ button, input { font: inherit; color: inherit; }
 /* ---------- cabecera ---------- */
 
 .top {
-  padding: 14px 16px 10px;
+  padding: 12px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-bottom: 1px solid var(--borde-suave);
 }
 
 .top-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 8px;
 }
 
-h1 {
+h1.subject {
   margin: 0;
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 600;
+  line-height: 1.3;
   letter-spacing: -0.01em;
-}
-
-.subject {
-  margin: 6px 0 0;
-  font-size: 12.5px;
-  color: var(--texto-2);
+  min-width: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
-
-.summary {
-  margin: 2px 0 0;
-  font-size: 12px;
-  color: var(--texto-3);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ---------- barra de herramientas ---------- */
-
-.toolbar {
-  padding: 0 16px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  border-bottom: 1px solid var(--borde-suave);
-}
+h1.subject:empty::before { content: "Adjuntos del hilo"; color: var(--texto-3); font-weight: 500; }
 
 .search {
   position: relative;
@@ -173,6 +158,9 @@ h1 {
   flex-wrap: wrap;
 }
 .toolbar-row > .btn { margin-left: auto; }
+.switch-extra { color: var(--texto-3); }
+.switch-extra:not(:empty)::before { content: " ("; }
+.switch-extra:not(:empty)::after { content: ")"; }
 
 /* interruptor */
 .switch {
@@ -544,4 +532,10 @@ h1 {
   padding: 0 16px 12px;
   font-size: 11.5px;
   color: var(--texto-3);
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-variant-numeric: tabular-nums;
 }
+.foot .hint { color: var(--texto-3); }

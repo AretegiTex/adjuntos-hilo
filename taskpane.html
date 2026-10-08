@@ -13,18 +13,13 @@
 <body>
   <header class="top">
     <div class="top-row">
-      <h1>Adjuntos del hilo</h1>
+      <h1 id="asunto" class="subject" title=""></h1>
       <button id="btnRecargar" class="icon-btn" title="Actualizar" aria-label="Actualizar">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9"/><path d="M13.5 2.5v3.3h-3.3"/>
         </svg>
       </button>
     </div>
-    <p id="asunto" class="subject"></p>
-    <p id="resumen" class="summary"></p>
-  </header>
-
-  <div class="toolbar">
     <div class="search">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
         <circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/>
@@ -34,12 +29,12 @@
     <div class="toolbar-row">
       <div class="toggles">
         <label class="switch" title="Si un archivo con el mismo nombre aparece varias veces, muestra solo el más reciente">
-          <input type="checkbox" id="chkVersiones" checked>
+          <input type="checkbox" id="chkVersiones" checked autocomplete="off">
           <span class="track"></span>
-          <span class="switch-label">Solo últimas versiones</span>
+          <span class="switch-label">Últimas versiones<span id="lblVersiones" class="switch-extra"></span></span>
         </label>
         <label class="switch" title="Logotipos de firma y otras imágenes incrustadas en el cuerpo del correo">
-          <input type="checkbox" id="chkInline">
+          <input type="checkbox" id="chkInline" autocomplete="off">
           <span class="track"></span>
           <span class="switch-label">Imágenes incrustadas</span>
         </label>
@@ -51,7 +46,7 @@
         <span id="btnTodosTexto">Descargar todo</span>
       </button>
     </div>
-  </div>
+  </header>
 
   <div id="estado" class="banner" role="status" aria-live="polite"></div>
 
@@ -63,7 +58,10 @@
 
   <main id="lista" class="thread"></main>
 
-  <footer id="pie" class="foot"></footer>
+  <footer class="foot">
+    <span id="resumen" class="summary"></span>
+    <span id="pie" class="hint"></span>
+  </footer>
 
   <script src="taskpane.js"></script>
 </body>

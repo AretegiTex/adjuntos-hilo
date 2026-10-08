@@ -214,9 +214,9 @@ async function cargar() {
   pintarEsqueleto();
 
   if (modo === "compose") {
-    item.subject.getAsync((r) => { if (miCarga === cargaEnCurso) $("asunto").textContent = r.value || ""; });
+    item.subject.getAsync((r) => { if (miCarga === cargaEnCurso) ponerAsunto(r.value); });
   } else {
-    $("asunto").textContent = item.subject || "";
+    ponerAsunto(item.subject);
   }
 
   let token;
@@ -314,17 +314,18 @@ function pintar() {
 
   const total = adjuntosActuales.filter((x) => $("chkInline").checked || !x.adjunto.isInline).length;
 
-  const partes = [];
+  $("lblVersiones").textContent = ocultas ? plural(ocultas, "oculta") : "";
+  $("filtro").placeholder = total ? "Buscar entre " + plural(total, "archivo") : "Buscar archivo";
+
   if (adjuntosActuales.length === 0) {
-    partes.push(nMensajesHilo ? "Sin archivos en " + plural(nMensajesHilo, "mensaje") : "");
+    $("resumen").textContent = nMensajesHilo ? "Sin archivos en " + plural(nMensajesHilo, "mensaje") : "";
   } else if (filtrando) {
-    partes.push(lista.length + " de " + plural(total, "archivo"));
+    $("resumen").textContent = lista.length + " de " + plural(total, "archivo");
   } else {
     const nMsgs = new Set(lista.map((x) => x.mensaje.id)).size;
-    partes.push(plural(lista.length, "archivo") + " en " + plural(nMsgs, "mensaje"));
+    $("resumen").textContent = plural(lista.length, "archivo") + " en " + plural(nMsgs, "mensaje") +
+      (nMensajesHilo > nMsgs ? " (" + plural(nMensajesHilo, "mensaje") + " en el hilo)" : "");
   }
-  if (ocultas) partes.push(plural(ocultas, "versión anterior", "versiones anteriores") + " ocultas");
-  $("resumen").textContent = partes.filter(Boolean).join(", ");
 
   if (!lista.length) {
     cont.appendChild(vacio(filtrando));
@@ -425,7 +426,11 @@ function filaAdjunto(x) {
   if (esArchivo(a)) {
     if (previsualizable(a)) {
       const btnVer = botonIcono(ICONO.ojo, "Vista previa");
-      btnVer.addEventListener("click", () => togglePreview(x, li, btnVer));
+      btnVer.addEventListener("click", () => {
+        if (simulado) { aviso("La vista previa se abre en una ventana grande (solo dentro de Outlook)."); return; }
+        if (puedeAmpliar()) ampliarPreview(x, btnVer);
+        else togglePreview(x, li, btnVer); // hosts antiguos sin ventana de diálogo
+      });
       acciones.appendChild(btnVer);
     }
     if (modo === "compose") {
@@ -822,6 +827,12 @@ function aviso(texto) {
   timerAviso = setTimeout(() => { if (el.textContent === texto) el.textContent = ""; }, 4000);
 }
 
+function ponerAsunto(asunto) {
+  const limpio = (asunto || "").replace(/^(\s*(re|rv|fw|fwd|tr|aw|sv|vs|wg)\s*:\s*)+/i, "").trim();
+  $("asunto").textContent = limpio;
+  $("asunto").title = asunto || "";
+}
+
 function mostrarError(texto) { $("estado").textContent = texto; }
 function limpiarError() { $("estado").textContent = ""; }
 
@@ -834,6 +845,6 @@ window.__adjuntosHiloPreview = function (datos) {
   if (!window.__controlesListos) { conectarControles(); window.__controlesListos = true; }
   adjuntosActuales = datos.items;
   nMensajesHilo = datos.nMensajes;
-  $("asunto").textContent = datos.asunto || "";
+  ponerAsunto(datos.asunto);
   pintar();
 };
