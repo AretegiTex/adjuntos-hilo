@@ -5,7 +5,6 @@ const GRAPH = "https://graph.microsoft.com/v1.0";
 const SCOPES = ["Mail.Read", "User.Read"];
 const MAX_ADJUNTAR = 25 * 1024 * 1024;   // límite de Outlook para adjuntar desde base64 (~25 MB)
 const MAX_PREVIEW = 15 * 1024 * 1024;    // tamaño máximo que previsualizamos
-const MAX_PREFETCH = 25 * 1024 * 1024;   // tamaño máximo que preparamos para arrastrar
 const MAX_CACHE = 80 * 1024 * 1024;      // memoria total de archivos preparados
 
 let pca = null;            // instancia MSAL
@@ -15,7 +14,6 @@ let nMensajesHilo = 0;
 let modo = "read";         // "read" | "compose"
 let simulado = false;      // vista previa de diseño fuera de Outlook
 let previewAbierta = null; // id del adjunto con vista previa desplegada
-let timerPrefetch = null;
 const cache = new Map();   // id adjunto -> {blob, url, size, t}
 
 const $ = (id) => document.getElementById(id);
@@ -380,9 +378,9 @@ function pintar() {
   actualizarBotonTodos(lista.filter((x) => esArchivo(x.adjunto)).length);
 
   const hayArchivos = lista.some((x) => esArchivo(x.adjunto));
-  $("pie").textContent = !hayArchivos ? ""
-    : modo === "compose" ? "Pulsa el clip de un archivo para adjuntarlo a este correo."
-    : "Puedes arrastrar un archivo al correo que estés redactando.";
+  $("pie").textContent = hayArchivos && modo === "compose"
+    ? "Pulsa el clip de un archivo para adjuntarlo a este correo."
+    : "";
 }
 
 function actualizarBotonTodos(n) {
@@ -440,7 +438,6 @@ function filaAdjunto(x) {
     btnDesc.addEventListener("click", () => descargar(x, btnDesc));
     acciones.appendChild(btnDesc);
 
-    prepararArrastre(x, li);
   }
 
   fila.append(tile, texto, acciones);
@@ -617,55 +614,6 @@ async function accionTodos() {
   actualizarBotonTodos(archivos.length);
 }
 
-// ---------------------------------------------------------------- arrastrar (experimental)
-
-function prepararArrastre(x, li) {
-  const a = x.adjunto;
-  if ((a.size || 0) > MAX_PREFETCH) return;
-  li.draggable = true;
-
-  // Preparamos el archivo al pasar el ratón, para que esté listo al arrastrar.
-  li.addEventListener("mouseenter", () => {
-    clearTimeout(timerPrefetch);
-    timerPrefetch = setTimeout(() => prefetch(x, li), 250);
-  });
-  li.addEventListener("mouseleave", () => clearTimeout(timerPrefetch));
-  li.addEventListener("pointerdown", () => prefetch(x, li));
-
-  li.addEventListener("dragstart", (e) => {
-    const hit = cache.get(a.id);
-    e.dataTransfer.effectAllowed = "copy";
-    if (!hit) {
-      e.dataTransfer.setData("text/plain", a.name || "");
-      aviso("El archivo aún se estaba preparando. Espera un instante y vuelve a arrastrar.");
-      return;
-    }
-    const tipo = hit.blob.type || "application/octet-stream";
-    try {
-      e.dataTransfer.items.add(new File([hit.blob], a.name || "adjunto", { type: tipo }));
-    } catch (_) { /* host sin soporte */ }
-    try {
-      e.dataTransfer.setData("DownloadURL", tipo + ":" + (a.name || "adjunto") + ":" + hit.url);
-    } catch (_) { /* no crítico */ }
-    li.classList.add("dragging");
-  });
-  li.addEventListener("dragend", () => li.classList.remove("dragging"));
-}
-
-async function prefetch(x, li) {
-  if (simulado) return;
-  if (cache.has(x.adjunto.id) || li.dataset.prefetching) return;
-  li.dataset.prefetching = "1";
-  try {
-    await obtenerBlob(x);
-    li.classList.add("ready");
-  } catch (_) {
-    /* se intentará de nuevo en la siguiente pasada */
-  } finally {
-    delete li.dataset.prefetching;
-  }
-}
-
 // ---------------------------------------------------------------- vista previa
 
 function previsualizable(a) {
@@ -715,11 +663,24 @@ async function togglePreview(x, li, btn) {
       img.alt = a.name || "";
       caja.appendChild(img);
     } else {
-      const f = document.createElement("iframe");
-      f.src = e.url + "#toolbar=0&navpanes=0";
-      f.title = a.name || "Vista previa";
-      caja.appendChild(f);
+      const pdf = document.createElement("div");
+      pdf.className = "pdf";
+      pdf.innerHTML = '<div class="preview-estado">Preparando el PDF</div>';
+      caja.appendChild(pdf);
+      const idAbierta = a.id;
+      const total = await window.renderizarPdf(e.blob, pdf, {
+        ancho: pdf.clientWidth || 300,
+        maxPaginas: 3,
+        cancelado: () => previewAbierta !== idAbierta,
+      });
+      if (total > 3) {
+        const mas = document.createElement("div");
+        mas.className = "preview-estado";
+        mas.textContent = "Mostrando 3 de " + total + " páginas. Ampliar para ver el documento completo.";
+        pdf.appendChild(mas);
+      }
     }
+    if (previewAbierta !== a.id) return;
     const barra = document.createElement("div");
     barra.className = "preview-bar";
     if (puedeAmpliar()) {

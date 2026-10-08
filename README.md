@@ -71,7 +71,7 @@ El panel se puede **anclar** (icono de chincheta): así se queda abierto y se ac
 ## Versión 2: redactar, arrastrar, vista previa
 
 - **Al responder o reenviar**, el botón «Adjuntos del hilo» también aparece en la ventana de redacción. Cada archivo tiene un clip **Adjuntar** (y «Adjuntar todo»): lo baja del correo original y lo mete en tu respuesta sin pasar por el disco. Límite de Outlook: 25 MB por archivo.
-- **Arrastrar**: en modo lectura, cada archivo se puede arrastrar al correo que estés escribiendo o a una carpeta de Windows. Es experimental: el panel prepara el archivo al pasar el ratón por encima (aparece un punto verde en la ficha) y hay hosts donde el navegador no entrega el archivo al soltar. Si en tu Outlook no funciona, usa el clip desde la ventana de redacción, que es la vía oficial.
+- **Arrastrar** desde el panel al correo no es posible: Outlook no acepta archivos soltados desde un complemento. Usa el clip desde la ventana de redacción.
 - **Vista previa** (icono del ojo) para PDF e imágenes, dentro del panel, con «Ampliar» para abrirla en una ventana grande. Excel, Word, DWG… no tienen previsualizador en el navegador: «Descargar» o «Abrir correo» (el correo original, donde Outlook sí los previsualiza).
 - «Abrir correo» está ahora una vez por mensaje, en la cabecera.
 
