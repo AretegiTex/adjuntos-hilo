@@ -15,6 +15,7 @@ son archivos estáticos (HTML/JS) que leen el buzón a través de Microsoft Grap
 | `config.template.js` | Plantilla con el Id de aplicación y de inquilino |
 | `configurar.py` | Rellena las plantillas y genera `manifest.xml` y `config.js` |
 | `taskpane.html / .css / .js` | El panel |
+| `visor.html` | Ventana de vista previa ampliada |
 | `msal-browser.min.js` | Biblioteca de autenticación de Microsoft (MSAL) |
 | `assets/` | Iconos |
 
@@ -66,6 +67,15 @@ Guarda.
 4. La primera vez pulsa **Iniciar sesión** y acepta el permiso de lectura del correo.
 
 El panel se puede **anclar** (icono de chincheta): así se queda abierto y se actualiza solo al cambiar de correo.
+
+## Versión 2: redactar, arrastrar, vista previa
+
+- **Al responder o reenviar**, el botón «Adjuntos del hilo» también aparece en la ventana de redacción. Cada archivo tiene un clip **Adjuntar** (y «Adjuntar todo»): lo baja del correo original y lo mete en tu respuesta sin pasar por el disco. Límite de Outlook: 25 MB por archivo.
+- **Arrastrar**: en modo lectura, cada archivo se puede arrastrar al correo que estés escribiendo o a una carpeta de Windows. Es experimental: el panel prepara el archivo al pasar el ratón por encima (aparece un punto verde en la ficha) y hay hosts donde el navegador no entrega el archivo al soltar. Si en tu Outlook no funciona, usa el clip desde la ventana de redacción, que es la vía oficial.
+- **Vista previa** (icono del ojo) para PDF e imágenes, dentro del panel, con «Ampliar» para abrirla en una ventana grande. Excel, Word, DWG… no tienen previsualizador en el navegador: «Descargar» o «Abrir correo» (el correo original, donde Outlook sí los previsualiza).
+- «Abrir correo» está ahora una vez por mensaje, en la cabecera.
+
+**Actualizar de la v1 a la v2**: el manifiesto cambia (añade el modo redacción y el permiso `ReadWriteItem`), así que hay que regenerarlo con `configurar.py`, subir **todos** los archivos a GitHub (incluido el nuevo `visor.html`) y volver a cargar `manifest.xml` en Outlook (Mis complementos → el complemento anterior se sustituye; si da problemas, quítalo primero y vuelve a añadirlo).
 
 ## Cómo funciona
 

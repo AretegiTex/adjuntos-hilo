@@ -10,29 +10,59 @@
   <link rel="stylesheet" href="taskpane.css">
 </head>
 <body>
-  <header class="cabecera">
-    <div class="titulo">Adjuntos del hilo</div>
-    <div class="acciones">
-      <label class="check"><input type="checkbox" id="chkInline"> Imágenes incrustadas</label>
-      <button id="btnTodos" class="btn secundario" disabled>Descargar todos</button>
-      <button id="btnRecargar" class="btn secundario" title="Recargar">↻</button>
+  <header class="top">
+    <div class="top-row">
+      <h1>Adjuntos del hilo</h1>
+      <button id="btnRecargar" class="icon-btn" title="Actualizar" aria-label="Actualizar">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9"/><path d="M13.5 2.5v3.3h-3.3"/>
+        </svg>
+      </button>
     </div>
+    <p id="asunto" class="subject"></p>
+    <p id="resumen" class="summary"></p>
   </header>
 
-  <div id="asunto" class="asunto"></div>
-
-  <div id="estado" class="estado"></div>
-
-  <div id="login" class="login oculto">
-    <p>Para leer la conversación, el complemento necesita permiso de lectura de tu buzón (una sola vez).</p>
-    <button id="btnLogin" class="btn">Iniciar sesión</button>
+  <div class="toolbar">
+    <div class="search">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+        <circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/>
+      </svg>
+      <input id="filtro" type="search" placeholder="Buscar archivo" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="toolbar-row">
+      <div class="toggles">
+        <label class="switch" title="Si un archivo con el mismo nombre aparece varias veces, muestra solo el más reciente">
+          <input type="checkbox" id="chkVersiones" checked>
+          <span class="track"></span>
+          <span class="switch-label">Solo últimas versiones</span>
+        </label>
+        <label class="switch" title="Logotipos de firma y otras imágenes incrustadas en el cuerpo del correo">
+          <input type="checkbox" id="chkInline">
+          <span class="track"></span>
+          <span class="switch-label">Imágenes incrustadas</span>
+        </label>
+      </div>
+      <button id="btnTodos" class="btn primary" disabled>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 2.5v8"/><path d="m5 7.5 3 3 3-3"/><path d="M2.5 11.5v1.5a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5v-1.5"/>
+        </svg>
+        <span id="btnTodosTexto">Descargar todo</span>
+      </button>
+    </div>
   </div>
 
-  <main id="lista" class="lista"></main>
+  <div id="estado" class="banner" role="status" aria-live="polite"></div>
 
-  <footer class="pie">
-    <span id="resumen"></span>
-  </footer>
+  <div id="login" class="card oculto">
+    <p>Permiso de lectura necesario</p>
+    <p>Para listar los archivos de la conversación, el panel necesita leer tu buzón. Se pide una sola vez.</p>
+    <button id="btnLogin" class="btn primary">Iniciar sesión</button>
+  </div>
+
+  <main id="lista" class="thread"></main>
+
+  <footer id="pie" class="foot"></footer>
 
   <script src="taskpane.js"></script>
 </body>

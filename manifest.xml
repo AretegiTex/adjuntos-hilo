@@ -7,7 +7,7 @@
   xsi:type="MailApp">
 
   <Id>7ac376fe-b4b7-4337-9cfc-b0b189bef99c</Id>
-  <Version>1.0.0.0</Version>
+  <Version>1.1.0.0</Version>
   <ProviderName>Obratex</ProviderName>
   <DefaultLocale>es-ES</DefaultLocale>
   <DisplayName DefaultValue="Adjuntos del hilo"/>
@@ -38,12 +38,18 @@
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
+    <Form xsi:type="ItemEdit">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://aretegitex.github.io/adjuntos-hilo/taskpane.html"/>
+      </DesktopSettings>
+    </Form>
   </FormSettings>
 
-  <Permissions>ReadItem</Permissions>
+  <Permissions>ReadWriteItem</Permissions>
 
   <Rule xsi:type="RuleCollection" Mode="Or">
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Edit"/>
   </Rule>
 
   <DisableEntityHighlighting>false</DisableEntityHighlighting>
@@ -84,6 +90,28 @@
                 </Group>
               </OfficeTab>
             </ExtensionPoint>
+            <ExtensionPoint xsi:type="MessageComposeCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="grpObratexRedactar">
+                  <Label resid="Group.Label"/>
+                  <Control xsi:type="Button" id="btnAdjuntosHiloRedactar">
+                    <Label resid="Button.Label"/>
+                    <Supertip>
+                      <Title resid="Button.Label"/>
+                      <Description resid="Button.TooltipRedactar"/>
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="Icon.16"/>
+                      <bt:Image size="32" resid="Icon.32"/>
+                      <bt:Image size="80" resid="Icon.80"/>
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <SourceLocation resid="Taskpane.Url"/>
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>
           </DesktopFormFactor>
         </Host>
       </Hosts>
@@ -103,6 +131,7 @@
         </bt:ShortStrings>
         <bt:LongStrings>
           <bt:String id="Button.Tooltip" DefaultValue="Lista todos los archivos adjuntos de la conversación, incluidos los de mensajes anteriores."/>
+          <bt:String id="Button.TooltipRedactar" DefaultValue="Adjunta a este correo cualquier archivo de la conversación, aunque viniera en mensajes anteriores."/>
         </bt:LongStrings>
       </Resources>
 

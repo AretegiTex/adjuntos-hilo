@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vista previa</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <style>
+    :root { color-scheme: light dark; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+      font-size: 13px;
+      background: #2b2b2b;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      flex: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      background: #1f1f1f;
+      border-bottom: 1px solid #3a3a3a;
+    }
+    header .nombre { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+    header a {
+      color: #58bd80; text-decoration: none; font-weight: 600; padding: 4px 10px;
+      border: 1px solid #58bd80; border-radius: 4px; white-space: nowrap;
+    }
+    header a:hover { background: rgba(88, 189, 128, .15); }
+    main { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+    main iframe { width: 100%; height: 100%; border: none; background: #fff; }
+    main img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .estado { color: #aaa; padding: 20px; text-align: center; }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="nombre" id="nombre">Vista previa</span>
+    <a id="descargar" href="#" download hidden>Descargar</a>
+  </header>
+  <main id="main"><div class="estado">Cargando…</div></main>
+  <script>
+    "use strict";
+    function mostrar(datos) {
+      const bin = atob(datos.base64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const blob = new Blob([bytes], { type: datos.type || "application/octet-stream" });
+      const url = URL.createObjectURL(blob);
+      document.getElementById("nombre").textContent = datos.name || "Vista previa";
+      document.title = datos.name || "Vista previa";
+      const a = document.getElementById("descargar");
+      a.href = url; a.download = datos.name || "archivo"; a.hidden = false;
+      const main = document.getElementById("main");
+      main.innerHTML = "";
+      if ((datos.type || "").startsWith("image/")) {
+        const img = document.createElement("img");
+        img.src = url; img.alt = datos.name || "";
+        main.appendChild(img);
+      } else {
+        const f = document.createElement("iframe");
+        f.src = url; f.title = datos.name || "Vista previa";
+        main.appendChild(f);
+      }
+    }
+    Office.onReady(() => {
+      Office.context.ui.addHandlerAsync(Office.EventType.DialogParentMessageReceived, (arg) => {
+        try { mostrar(JSON.parse(arg.message)); }
+        catch (e) { document.getElementById("main").innerHTML = '<div class="estado">No se pudo mostrar el archivo.</div>'; }
+      }, () => {
+        Office.context.ui.messageParent("listo");
+      });
+    });
+  </script>
+</body>
+</html>
